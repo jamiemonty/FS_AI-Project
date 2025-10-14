@@ -1,0 +1,102 @@
+MULTI-YEAR BACKTESTING RESULTS
+==================================================
+Strategy: Buy when stock is 30%+ below 100-day MA, sell when above MA or after 40 days
+Code created using GPT-4o (ChatGPT)
+
+YEAR-BY-YEAR RESULTS:
+------------------------------
+
+Year: 2025
+  Average return per trade: 19.06%
+  Average days held: 33.3
+  Total trades: 57
+  Win rate: 77.2%
+  Non-overlapping trades: 4
+  Estimated compounded return: -28.27%
+
+Year: 2024
+  Average return per trade: 8.88%
+  Average days held: 37.9
+  Total trades: 24
+  Win rate: 62.5%
+  Non-overlapping trades: 4
+  Estimated compounded return: 60.20%
+
+Year: 2023
+  Average return per trade: 20.33%
+  Average days held: 35.8
+  Total trades: 31
+  Win rate: 83.9%
+  Non-overlapping trades: 5
+  Estimated compounded return: 41.25%
+
+Year: 2022
+  Average return per trade: 2.94%
+  Average days held: 37.9
+  Total trades: 91
+  Win rate: 56.0%
+  Non-overlapping trades: 6
+  Estimated compounded return: -32.56%
+
+Year: 2021
+  Average return per trade: 19.09%
+  Average days held: 26.7
+  Total trades: 7
+  Win rate: 57.1%
+  Non-overlapping trades: 4
+  Estimated compounded return: 111.22%
+
+Year: 2020
+  Average return per trade: 20.92%
+  Average days held: 34.7
+  Total trades: 365
+  Win rate: 80.3%
+  Non-overlapping trades: 6
+  Estimated compounded return: 225.96%
+
+Year: 2019
+  Average return per trade: 10.24%
+  Average days held: 36.6
+  Total trades: 25
+  Win rate: 68.0%
+  Non-overlapping trades: 5
+  Estimated compounded return: -4.61%
+
+Year: 2018
+  Average return per trade: 0.04%
+  Average days held: 22.9
+  Total trades: 30
+  Win rate: 53.3%
+  Non-overlapping trades: 3
+  Estimated compounded return: 30.10%
+
+Year: 2017
+  Average return per trade: 10.85%
+  Average days held: 40.0
+  Total trades: 4
+  Win rate: 75.0%
+  Non-overlapping trades: 2
+  Estimated compounded return: 5.51%
+
+Year: 2016
+  Average return per trade: 18.64%
+  Average days held: 35.4
+  Total trades: 37
+  Win rate: 78.4%
+  Non-overlapping trades: 5
+  Estimated compounded return: 31.50%
+
+OVERALL STRATEGY PERFORMANCE:
+------------------------------
+Years with trades: 10/10
+Average return per trade: 13.10%
+Average days held: 34.1
+Total trades across all years: 671
+Average win rate: 69.2%
+Average compounded return per year: 44.03%
+
+Best performing year: 2020 (225.96% return)
+Worst performing year: 2022 (-32.56% return)
+
+NOTE: Compounded returns are estimated based on non-overlapping trades only.
+Actual returns would be lower due to overlapping positions and market constraints.

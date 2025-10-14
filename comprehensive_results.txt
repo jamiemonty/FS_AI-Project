@@ -1,0 +1,56 @@
+COMPREHENSIVE 12-YEAR BACKTESTING RESULTS (2014-2025)
+============================================================
+
+STRATEGY DESCRIPTION:
+--------------------
+We are using Adj Closes that are 30% below the 50-day MA to create buy signals, and sell signals are created when 50-day MA crossovers occur, more than 30 days have elapsed, or we reach the end of the year.
+
+PROMPT USED TO CREATE CODE:
+-------------------------
+I have S&P500 stock data for 25 years in csv files in a directory called "YahooStockData"; the files contain the following columns: Date, Close, Adj Close, High, Low, Open, Volume, Ticker. Process all stocks in the directory. Set a variable called theYear to 2024.
+For each trading day in theYear, check if:
+- the adjusted close is at least 30% below the 50-day moving average on that trading day.
+If a stock meets these criteria, create a buy signal for that trading day.
+Create a sell signal when any one of these conditions is met on a later trading day:
+- the adjusted close is above the 50-day moving average on that trading day.
+- more than 30 trading days have elapsed since the buy signal was created for this stock.
+- we reach the end of theYear.
+Print the version of GPT used to create the code.
+Optimize your strategy for 2024, and then backtest for 12 years: 2014 to 2025.
+Code created using GPT-4o (ChatGPT)
+
+OPTIMIZATION RESULTS (2024):
+-------------------------
+Best parameters found: MA=50, Threshold=30%, MaxDays=30
+Top 5 parameter combinations tested:
+1. MA=50, Threshold=30%, MaxDays=30: 0.00% return, 0 trades, 0.0% win rate
+
+PERFORMANCE OVER 12 YEARS (2014-2025):
+-----------------------------------
+Finished processing year 2014. Compounded gain: -32.46%
+Finished processing year 2015. Compounded gain: 14.51%
+Finished processing year 2016. Compounded gain: -16.20%
+Finished processing year 2017. Compounded gain: 15.43%
+Finished processing year 2018. Compounded gain: 8.52%
+Finished processing year 2019. Compounded gain: -1.64%
+Finished processing year 2020. Compounded gain: -0.30%
+Finished processing year 2021. Compounded gain: 51.99%
+Finished processing year 2022. Compounded gain: 24.02%
+Finished processing year 2023. Compounded gain: 72.94%
+Finished processing year 2024. Compounded gain: 108.30%
+Finished processing year 2025. Compounded gain: -46.58%
+
+Compound calculation: 0.6754 * 1.1451 * 0.8380 * 1.1543 * 1.0852 * 0.9836 * 0.9970 * 1.5199 * 1.2402 * 1.7294 * 2.0830 * 0.5342 = 2.888
+Total 12-year compound return: 188.80%
+
+SUMMARY STATISTICS:
+------------------
+Years with trades: 12/12
+Average return per trade: 7.38%
+Average days held: 26.3
+Total trades across all years: 507
+Average win rate: 62.7%
+Best performing year: 2024 (108.30% return)
+Worst performing year: 2025 (-46.58% return)
+
+NOTE: Returns are based on non-overlapping trades to provide realistic compounding estimates.
