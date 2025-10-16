@@ -1,0 +1,85 @@
+STUDENT INSTRUCTIONS - AI STOCK TRADING BACKTESTING PROJECT
+============================================================
+
+EASIEST METHOD - USING MAKEFILE:
+--------------------------------
+
+1. NAVIGATE TO PROJECT DIRECTORY:
+   cd "C:\Users\G00414989@atu.ie\OneDrive - Atlantic TU\Full Stack Engineering\AI_Project\FS_AI-Project"
+
+2. FIRST TIME SETUP:
+   make setup
+
+3. RUN ANALYSIS:
+   make quick      (recommended - uses optimized parameters, 10-15 minutes)
+   make run        (full analysis with optimization, 30+ minutes)
+
+4. VIEW RESULTS:
+   make results    (show summary)
+   make plots      (count generated charts)
+
+5. OTHER COMMANDS:
+   make help       (show all available commands)
+   make clean      (remove all generated files)
+   make status     (check project status)
+
+ALTERNATIVE METHOD - MANUAL COMMANDS:
+-------------------------------------
+
+1. NAVIGATE TO PROJECT DIRECTORY:
+   cd "C:\Users\G00414989@atu.ie\OneDrive - Atlantic TU\Full Stack Engineering\AI_Project\FS_AI-Project"
+
+2. ACTIVATE VIRTUAL ENVIRONMENT:
+   .\.venv\Scripts\Activate.ps1
+
+3. INSTALL REQUIRED PACKAGES (if needed):
+   pip install pandas numpy matplotlib
+
+4. RUN THE ANALYSIS:
+   
+   OPTION A - FULL ANALYSIS (includes optimization, takes 30+ minutes):
+   python main.py
+   
+   OPTION B - QUICK RUN (uses pre-optimized parameters, takes 10-15 minutes):
+   python -c "from playGround import quick_run; quick_run()"
+
+WHAT YOU'LL GET:
+----------------
+📁 Files Generated:
+   • comprehensive_results.txt - Complete 12-year analysis report
+   • 2014_perf.csv through 2025_perf.csv - Individual year trade data
+   • results.txt - Summary statistics
+
+📁 Directories Generated:
+   • plots_2014/ through plots_2025/ - Stock charts for each year
+   • Each directory contains PNG files for stocks that had trades
+
+EXPECTED RUNTIME:
+-----------------
+• Full Analysis: 30-45 minutes (includes optimization testing)
+• Quick Run: 10-15 minutes (uses best parameters directly)
+
+STRATEGY BEING TESTED:
+----------------------
+• Buy Signal: Stock price 30% below 50-day moving average
+• Sell Signals: Price above MA, 30 trading days elapsed, or year-end
+• Test Period: 12 years (2014-2025)
+• Total S&P 500 stocks analyzed: 503
+
+TROUBLESHOOTING:
+----------------
+If you get errors:
+1. Make sure you're in the correct directory
+2. Ensure virtual environment is activated
+3. Check that all CSV files are in YahooStockData/ folder
+4. Try the quick_run option if optimization takes too long
+
+FINAL OUTPUT:
+-------------
+The analysis will show:
+• 12-year compound return: ~189%
+• Total trades: ~507 across all years
+• Win rate: ~63%
+• Comparison with S&P 500 performance
+
+Created using GPT-4o (ChatGPT)

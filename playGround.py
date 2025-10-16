@@ -495,3 +495,51 @@ def create_comprehensive_results(results, best_params, optimization_results, tot
             f.write(f"Worst performing year: {worst_year['year']} ({worst_year['compounded_return']:.2f}% return)\n\n")
         
         f.write("NOTE: Returns are based on non-overlapping trades to provide realistic compounding estimates.\n")
+        
+def quick_run():
+    """
+    Quick run function for students - uses pre-optimized parameters.
+    Skips optimization process and runs 12-year backtest directly.
+    """
+    print("Code created using GPT-4o (ChatGPT)")
+    print("🚀 QUICK RUN: Using Pre-Optimized Strategy Parameters...")
+    print("Best parameters from optimization: 30% below 50-day MA, 30-day max hold")
+    
+    # Use best parameters found during optimization
+    ma_period, buy_threshold, max_hold_days = 50, 0.30, 30
+    
+    # Run backtest for 12 years (2014-2025)
+    test_years = [2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014]
+    
+    results = []
+    yearly_returns = []
+    
+    for year in test_years:
+        try:
+            year_result = backtest_year(year, ma_period, buy_threshold, max_hold_days)
+            results.append(year_result)
+            yearly_returns.append(year_result['compounded_return'])
+            print(f"Finished processing year {year}. Compounded gain: {year_result['compounded_return']:.2f}%")
+        except Exception as e:
+            print(f"Error processing year {year}: {str(e)}")
+            results.append({
+                'year': year, 'avg_return': 0, 'avg_days': 0, 'total_trades': 0,
+                'win_rate': 0, 'compounded_return': 0, 'non_overlapping_trades': 0
+            })
+            yearly_returns.append(0)
+    
+    # Calculate total compound return
+    total_compound = 1.0
+    for annual_return in yearly_returns:
+        total_compound *= (1 + annual_return / 100)
+    
+    print(f"\n🎯 12-Year Strategy Performance:")
+    print(f"Total compound return: {(total_compound - 1) * 100:.2f}%")
+    
+    # Create results file
+    best_params = (ma_period, buy_threshold, max_hold_days)
+    optimization_results = [{'ma_period': ma_period, 'buy_threshold': buy_threshold, 'max_hold_days': max_hold_days, 
+                           'compounded_return': 0, 'total_trades': 0, 'win_rate': 0}]
+    create_comprehensive_results(results, best_params, optimization_results, total_compound)
+    
+    print(f"\n✅ Quick run complete! Files generated in current directory.")
