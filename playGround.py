@@ -3,12 +3,14 @@ import pandas as pd
 import numpy as np
 import os
 from datetime import datetime
+import mplfinance as mpf
 
-def backtest_year(theYear, ma_period=100, buy_threshold=0.20, max_hold_days=40):
+def backtest_year(theYear, ma_period=100, buy_threshold=0.20, max_hold_days=40, bb_period=20, bb_std=2):
     """
     Backtest the trading strategy for a specific year.
     Modified to handle overlapping trades by only allowing one position per stock at a time.
     Optimized parameters: 20% below 100-day MA, 40-day max hold
+    Also calculate Bollinger Bands (default 20-day, 2 std) for plotting.
     """
     print(f"\n🔍 Backtesting year {theYear}...")
     
@@ -34,11 +36,24 @@ def backtest_year(theYear, ma_period=100, buy_threshold=0.20, max_hold_days=40):
             
             # Calculate 100-day moving average
             df['MA_100'] = df['Adj Close'].rolling(window=ma_period).mean()
+
+            # Calculate Bollinger Bands on Adj Close using bb_period and bb_std
+            df['BB_Middle'] = df['Adj Close'].rolling(window=bb_period).mean()
+            df['BB_Std'] = df['Adj Close'].rolling(window=bb_period).std()
+            df['BB_Upper'] = df['BB_Middle'] + (bb_std * df['BB_Std'])
+            df['BB_Lower'] = df['BB_Middle'] - (bb_std * df['BB_Std'])
+            
+            # Calculate MACD (standard: 12, 26, 9 EMA)
+            df['EMA_12'] = df['Adj Close'].ewm(span=12, adjust=False).mean()
+            df['EMA_26'] = df['Adj Close'].ewm(span=26, adjust=False).mean()
+            df['MACD'] = df['EMA_12'] - df['EMA_26']
+            df['MACD_Signal'] = df['MACD'].ewm(span=9, adjust=False).mean()
+            df['MACD_Hist'] = df['MACD'] - df['MACD_Signal']
             
             # Filter for the specified year and ensure we have MA data
             df_year = df[df['Date'].dt.year == theYear].copy()
             df_year = df_year.dropna(subset=['MA_100']).reset_index(drop=True)
-            
+
             if df_year.empty:
                 continue
                 
@@ -118,39 +133,59 @@ def backtest_year(theYear, ma_period=100, buy_threshold=0.20, max_hold_days=40):
             
             # Only create plots for stocks that had at least one trade
             if buy_dates or sell_dates:
-                # Create the plot
-                plt.figure(figsize=(12, 8))
-                
-                # Plot adjusted close prices
-                plt.plot(df_year['Date'], df_year['Adj Close'], 
-                        label='Adjusted Close', color='blue', linewidth=1)
-                
-                # Plot 100-day moving average
-                plt.plot(df_year['Date'], df_year['MA_100'], 
-                        label='100-day MA', color='orange', linewidth=2)
-                
-                # Add buy signals as vertical dashed lines
-                for buy_date in buy_dates:
-                    plt.axvline(x=buy_date, color='green', linestyle='--', 
-                              alpha=0.7, linewidth=2, label='Buy Signal' if buy_date == buy_dates[0] else "")
-                
-                # Add sell signals as vertical dashed lines
-                for sell_date in sell_dates:
-                    plt.axvline(x=sell_date, color='red', linestyle='--', 
-                              alpha=0.7, linewidth=2, label='Sell Signal' if sell_date == sell_dates[0] else "")
-                
-                plt.title(f"{file.replace('.csv', '')} - {theYear} Trading Signals")
-                plt.xlabel('Date')
-                plt.ylabel('Price ($)')
-                plt.legend()
-                plt.grid(True, alpha=0.3)
-                plt.xticks(rotation=45)
-                plt.tight_layout()
-                
-                # Save the plot
+                # Prepare dataframe for mplfinance (must have columns: Open, High, Low, Close, Volume, Date as index)
+                df_plot = df_year.copy()
+                df_plot.set_index('Date', inplace=True)
+                # Add Bollinger Bands columns if not present
+                if 'BB_Upper' not in df_plot.columns:
+                    df_plot['BB_Upper'] = np.nan
+                if 'BB_Lower' not in df_plot.columns:
+                    df_plot['BB_Lower'] = np.nan
+                # Create additional overlays
+                addplots = [
+                    mpf.make_addplot(df_plot['MA_100'], color='orange', width=1.5, label='100-day MA'),
+                    mpf.make_addplot(df_plot['BB_Upper'], color='lightgrey', linestyle=':', width=1, label='BB Upper'),
+                    mpf.make_addplot(df_plot['BB_Lower'], color='lightgrey', linestyle=':', width=1, label='BB Lower'),
+                    mpf.make_addplot(df_plot['BB_Middle'], color='grey', linestyle='--', width=1, label=f'{bb_period}-day BB Middle'),
+                ]
+                # Mark buy/sell signals
+                buy_marker = [np.nan]*len(df_plot)
+                sell_marker = [np.nan]*len(df_plot)
+                for i, dt in enumerate(df_plot.index):
+                    if dt in buy_dates:
+                        buy_marker[i] = df_plot.iloc[i]['Low'] * 0.98  # marker slightly below low
+                    if dt in sell_dates:
+                        sell_marker[i] = df_plot.iloc[i]['High'] * 1.02  # marker slightly above high
+                addplots.append(mpf.make_addplot(buy_marker, type='scatter', markersize=80, marker='^', color='green', label='Buy Signal'))
+                addplots.append(mpf.make_addplot(sell_marker, type='scatter', markersize=80, marker='v', color='red', label='Sell Signal'))
+                # MACD addplots (panel=1 for subplot)
+                macd_plots = [
+                    mpf.make_addplot(df_plot['MACD'], panel=1, color='blue', width=1.5, label='MACD'),
+                    mpf.make_addplot(df_plot['MACD_Signal'], panel=1, color='orange', width=1, label='MACD Signal'),
+                    mpf.make_addplot(df_plot['MACD_Hist'], panel=1, type='bar', color='grey', alpha=0.5, label='MACD Hist'),
+                ]
+                # Combine main and MACD addplots
+                all_addplots = addplots + macd_plots
+                # Plot candlestick chart with overlays and MACD panel
                 plot_filename = f"{file.replace('.csv', '')}_{theYear}.png"
-                plt.savefig(os.path.join(output_folder, plot_filename), dpi=300, bbox_inches='tight')
-                plt.close()
+                mpf.plot(
+                    df_plot,
+                    type='candle',
+                    style='yahoo',
+                    addplot=all_addplots,
+                    title=f"{file.replace('.csv', '')} - {theYear} Trading Signals",
+                    ylabel='Price ($)',
+                    volume=False,
+                    savefig=dict(fname=os.path.join(output_folder, plot_filename), dpi=300, bbox_inches='tight'),
+                    tight_layout=True,
+                    datetime_format='%Y-%m-%d',
+                    xrotation=45,
+                    figscale=1.2,
+                    figratio=(12,8),
+                    show_nontrading=False,
+                    panel_ratios=(3,1),
+                    ylabel_lower='MACD'
+                )
                 
         except Exception as e:
             print(f"Error processing {file}: {str(e)}")
